@@ -1,10 +1,10 @@
 package com.flanders;
-import android.hardware.Sensor;
+
 import android.os.Build;
 
-        import com.google.gson.Gson;
+import com.google.gson.Gson;
 
-        import java.util.UUID;
+import java.util.UUID;
 
 public class ChatMessage implements Comparable<ChatMessage> {
 
@@ -13,16 +13,16 @@ public class ChatMessage implements Comparable<ChatMessage> {
 
     private String name;
     private String text;
-    private long timestamp;
     private String id;
     private String type;
-    private double lat;
-    private double lon;
+
+    private Double lat;
+    private Double lon;
     private Double vel;
 
-    public static ChatMessage fromJson(String jsonString){
-        return new Gson().fromJson(jsonString, ChatMessage.class);
-    }
+    private long timestamp;
+
+    public static ChatMessage fromJson(String jsonString){ return new Gson().fromJson(jsonString, ChatMessage.class); }
 
     public ChatMessage(String text, long timestamp, Double lat, Double lon, Double vel) {
         this(Build.MODEL, text, timestamp, UUID.randomUUID().toString(), TYPE_USER_CHAT, lat, lon, vel);
@@ -64,11 +64,18 @@ public class ChatMessage implements Comparable<ChatMessage> {
     }
 
 
-
+    public String getId() {
+        return id;
+    }
+    public String getType() {
+        return type;
+    }
     public String getName() {
         return name;
     }
-
+    public String getText() {
+        return text;
+    }
     public Double getLat() {
         return lat;
     }
@@ -76,20 +83,7 @@ public class ChatMessage implements Comparable<ChatMessage> {
     public Double getVel() {
         return vel;
     }
-
-    public String getText() {
-        return text;
-    }
-
     public long getTimestamp() {
         return timestamp;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getType() {
-        return type;
     }
 }

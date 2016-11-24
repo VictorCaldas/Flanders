@@ -1,12 +1,9 @@
 package com.flanders;
 
 import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.support.design.widget.TextInputLayout;
@@ -36,9 +33,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int REQUEST_RESOLVE_ERROR = 1;
     private static final String ENCODE = "UTF-8";
-    private SensorManager mSensorManager;
+
+    private static final int REQUEST_RESOLVE_ERROR = 1;
+
 
     private Button mSendButton;
     private EditText mEditText;
@@ -264,7 +262,6 @@ public class MainActivity extends AppCompatActivity {
     private class NearbyConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
         @Override
         public void onConnectionFailed(ConnectionResult connectionResult) {
-
             Log.e(TAG, "connect failed.");
         }
     }
