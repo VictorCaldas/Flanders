@@ -1,4 +1,5 @@
 package com.flanders;
+import android.hardware.Sensor;
 import android.os.Build;
 
         import com.google.gson.Gson;
@@ -15,21 +16,27 @@ public class ChatMessage implements Comparable<ChatMessage> {
     private long timestamp;
     private String id;
     private String type;
+    private double lat;
+    private double lon;
+    private Double vel;
 
     public static ChatMessage fromJson(String jsonString){
         return new Gson().fromJson(jsonString, ChatMessage.class);
     }
 
-    public ChatMessage(String text, long timestamp) {
-        this(Build.MODEL, text, timestamp, UUID.randomUUID().toString(), TYPE_USER_CHAT);
+    public ChatMessage(String text, long timestamp, Double lat, Double lon, Double vel) {
+        this(Build.MODEL, text, timestamp, UUID.randomUUID().toString(), TYPE_USER_CHAT, lat, lon, vel);
     }
 
-    public ChatMessage(String name, String text, long timestamp, String id, String type) {
+    public ChatMessage(String name, String text, long timestamp, String id, String type, Double lat, Double lon, Double vel) {
         this.name = name;
         this.text = text;
         this.timestamp = timestamp;
         this.id = id;
         this.type = type;
+        this.lat = lat;
+        this.lon = lon;
+        this.vel = vel;
     }
 
     @Override
@@ -56,8 +63,18 @@ public class ChatMessage implements Comparable<ChatMessage> {
         }
     }
 
+
+
     public String getName() {
         return name;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+    public Double getLon() {return lon; }
+    public Double getVel() {
+        return vel;
     }
 
     public String getText() {

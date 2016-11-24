@@ -28,6 +28,15 @@ public class MessageListAdapter extends ArrayAdapter<ChatMessage> {
         TextView nameText = (TextView) view.findViewById(R.id.name_text);
         nameText.setText(message.getName());
 
+        TextView latText = (TextView) view.findViewById(R.id.lat_text);
+        latText.setText(String.valueOf(message.getLat()));
+
+        TextView lonText = (TextView) view.findViewById(R.id.lon_text);
+        lonText.setText(String.valueOf(message.getLon()));
+
+        TextView velText = (TextView) view.findViewById(R.id.vel_text);
+        velText.setText(String.valueOf(message.getVel()));
+
         TextView messageText = (TextView) view.findViewById(R.id.message_text);
         messageText.setText(message.getText());
 

@@ -30,6 +30,22 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/message_text"/>
 
+        <TextView
+            android:id="@+id/lat_text"
+            android:layout_width="match_parent"
+            android:layout_below="@id/timestamp_text"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/lon_text"
+            android:layout_width="match_parent"
+            android:layout_below="@id/lat_text"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/vel_text"
+            android:layout_width="match_parent"
+            android:layout_below="@id/lon_text"
+            android:layout_height="wrap_content"/>
+
     </RelativeLayout>
 
 </LinearLayout>
