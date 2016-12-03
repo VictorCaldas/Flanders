@@ -1,16 +1,11 @@
 package com.flanders;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,18 +29,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ENCODE = "UTF-8";
-
     private static final int REQUEST_RESOLVE_ERROR = 1;
-
-
     private Button mSendButton;
     private EditText mEditText;
     private TextInputLayout mTextInputLayout;
     private MessageListAdapter mAdapter;
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private List<ChatMessage> mMessageList = new ArrayList<>();
     private boolean mResolvingError = false;
-
     private GoogleApiClient mGoogleApiClient;
     private NearbyConnectionCallbacks mConnectionCallbacks = new NearbyConnectionCallbacks();
     private NearbyConnectionFailedListener mFailedListener = new NearbyConnectionFailedListener();
@@ -54,28 +44,24 @@ public class MainActivity extends AppCompatActivity {
             .setDistanceType(Strategy.DISTANCE_TYPE_DEFAULT)
             .setTtlSeconds(Strategy.TTL_SECONDS_DEFAULT)
             .build();
-
+    public ListView listview;
+    private Message mActiveMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         createGoogleApiClient();
+        setupView();
+    }
 
+    public void setupView(){
         mSendButton = (Button) findViewById(R.id.send_button);
         mEditText = (EditText) findViewById(R.id.edit_text);
         mTextInputLayout = (TextInputLayout) findViewById(R.id.text_input_layout);
         mAdapter = new MessageListAdapter(this, mMessageList);
-        ListView listView = (ListView) findViewById(R.id.list_view);
-        listView.setAdapter(mAdapter);
-
-        mSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage();
-            }
-        });
+        listview = (ListView) findViewById(R.id.list_view);
+        listview.setAdapter(mAdapter);
     }
 
     private void createGoogleApiClient(){
@@ -84,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 .addConnectionCallbacks(mConnectionCallbacks)
                 .addOnConnectionFailedListener(mFailedListener)
                 .build();
-
     }
 
     private MessageListener mMessageListener = new MessageListener() {
@@ -101,8 +86,13 @@ public class MainActivity extends AppCompatActivity {
                 addNewMessage(ChatMessage.fromJson(json));
             }
         }
-    };
 
+        @Override
+        public void onLost(Message message) {
+            String messageAsString = new String(message.getContent());
+            Log.d(TAG, "Lost sight of message: " + messageAsString);
+        }
+    };
 
     @Override
     protected void onStart() {
@@ -117,6 +107,12 @@ public class MainActivity extends AppCompatActivity {
             mGoogleApiClient.disconnect();
         }
         super.onStop();
+    }
+
+    private void publish(String message) {
+        Log.i(TAG, "Publishing message: " + message);
+        mActiveMessage = new Message(message.getBytes());
+        Nearby.Messages.publish(mGoogleApiClient, mActiveMessage);
     }
 
     @Override
@@ -135,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void sendMessage() {
-        final ChatMessage chatMessage = new ChatMessage(mEditText.getText().toString(), System.currentTimeMillis(),getLat(),getLon(),getVelocity());
+        final ChatMessage chatMessage = new ChatMessage(mEditText.getText().toString(), System.currentTimeMillis(),0.0,0.0,0.0);
         mEditText.setText("");
         mTextInputLayout.setHint(getString(R.string.hint_sending));
         if (getCurrentFocus() != null) {
@@ -197,24 +193,22 @@ public class MainActivity extends AppCompatActivity {
     private class NearbyConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(Bundle bundle) {
-            Nearby.Messages.getPermissionStatus(mGoogleApiClient)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            if (status.isSuccess()) {
-                                Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener, mStrategy);
-                            } else {
-                                if (status.hasResolution()) {
-                                    if (!mResolvingError) {
-                                        handleStartSolution(status);
-                                    }
-                                } else {
-                                    Log.e(TAG, "sendMessage failed.");
-                                }
+            Nearby.Messages.getPermissionStatus(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener, mStrategy);
+                    } else {
+                        if (status.hasResolution()){
+                            if (!mResolvingError){
+                                handleStartSolution(status);
                             }
+                        } else {
+                            Log.e(TAG, "Mensagem Não Enviada");
                         }
-                    });
-
+                    }
+                }
+            });
         }
 
         @Override
@@ -222,42 +216,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
-    private double getVelocity() {
-        GPSTracker gps = new GPSTracker(this);
-        if (gps.canGetLocation()) {
-            return (gps.getSpeed() * 3600.0);
-        }
-        return 0;
-    }
-
-    private double getLon() {
-        GPSTracker gps = new GPSTracker(this);
-        if (gps.canGetLocation()) {
-            return gps.getLongitude();
-        }
-        return 0;
-    }
-
-
-
-
-    private double getLat() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
-        } else {
-
-            GPSTracker gps = new GPSTracker(this);
-            if (gps.canGetLocation()) {
-                return gps.getLatitude();
-            }
-        }
-
-        return 0;
-    }
-
 
     private class NearbyConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
         @Override

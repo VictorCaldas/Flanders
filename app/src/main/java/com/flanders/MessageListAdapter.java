@@ -21,9 +21,7 @@ public class MessageListAdapter extends ArrayAdapter<ChatMessage> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
-
         ChatMessage message = getItem(position);
-
 
         TextView nameText = (TextView) view.findViewById(R.id.name_text);
         nameText.setText(message.getName());
