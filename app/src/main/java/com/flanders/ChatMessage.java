@@ -25,7 +25,7 @@ public class ChatMessage implements Comparable<ChatMessage> {
     public static ChatMessage fromJson(String jsonString){ return new Gson().fromJson(jsonString, ChatMessage.class); }
 
     public ChatMessage(String text, long timestamp, Double lat, Double lon, Double vel) {
-        this(Build.MODEL, text, timestamp, UUID.randomUUID().toString(), TYPE_USER_CHAT, lat, lon, vel);
+        this(Build.MODEL, text, timestamp, UUID.randomUUID().toString(), TYPE_BEACON, lat, lon, vel);
     }
 
     public ChatMessage(String name, String text, long timestamp, String id, String type, Double lat, Double lon, Double vel) {

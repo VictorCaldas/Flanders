@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -30,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ENCODE = "UTF-8";
     private static final int REQUEST_RESOLVE_ERROR = 1;
-    private Button mSendButton;
     private EditText mEditText;
     private TextInputLayout mTextInputLayout;
     private MessageListAdapter mAdapter;
@@ -56,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupView(){
-        mSendButton = (Button) findViewById(R.id.send_button);
-        mEditText = (EditText) findViewById(R.id.edit_text);
-        mTextInputLayout = (TextInputLayout) findViewById(R.id.text_input_layout);
         mAdapter = new MessageListAdapter(this, mMessageList);
         listview = (ListView) findViewById(R.id.list_view);
         listview.setAdapter(mAdapter);
@@ -128,12 +122,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-    private void sendMessage() {
-        final ChatMessage chatMessage = new ChatMessage(mEditText.getText().toString(), System.currentTimeMillis(),0.0,0.0,0.0);
-        mEditText.setText("");
-        mTextInputLayout.setHint(getString(R.string.hint_sending));
+    /*private void sendMessage() {
         if (getCurrentFocus() != null) {
             // hide ime
             InputMethodManager manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -166,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
+*/
     private void handleStartSolution(Status status) {
         if (!mResolvingError) {
             try {

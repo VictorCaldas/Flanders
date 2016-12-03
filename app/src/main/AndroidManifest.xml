@@ -19,17 +19,15 @@
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyDpCzF5qQTYS2qa2QVN41cu-MpElx6qTLo" />
 
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
 
-    <uses-feature android:name="android.hardware.sensor.accelerometer"
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
-
 </manifest>
