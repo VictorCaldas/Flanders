@@ -1,4 +1,4 @@
-package com.flanders;
+package com.flanders.UI;
 
 import android.content.Intent;
 import android.content.IntentSender;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.flanders.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == REQUEST_RESOLVE_ERROR) {
             mResolvingError = false;
             if (resultCode == RESULT_OK) {
-                Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener, mStrategy);
+                Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener);
             } else {
                 Log.d(TAG, "Failed to resolve error with code " + resultCode);
             }
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResult(Status status) {
                     if (status.isSuccess()) {
-                        Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener, mStrategy);
+                        Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener);
                     } else {
                         if (status.hasResolution()){
                             if (!mResolvingError){

@@ -1,4 +1,4 @@
-package com.flanders;
+package com.flanders.UI;
 
 import android.os.Build;
 

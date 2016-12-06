@@ -1,10 +1,12 @@
-package com.flanders;
+package com.flanders.UI;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.flanders.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
