@@ -3,5 +3,5 @@
     <string name="hint_sending">Sending…</string>
     <string name="hint_input">input</string>
     <string name="send">send</string>
-    <string name="url_root">https://homedonuts.herokuapp.com/</string>
+    <string name="url_api">https://homedonuts.herokuapp.com/</string>
 </resources>
