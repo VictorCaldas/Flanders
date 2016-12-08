@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MessageListAdapter extends ArrayAdapter<ChatMessage> {
 
-    private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+    private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     public MessageListAdapter(Context context, List<ChatMessage> objects) {
         super(context, R.layout.list_item_message, R.id.message_text, objects);

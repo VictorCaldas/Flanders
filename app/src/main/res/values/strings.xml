@@ -4,4 +4,5 @@
     <string name="hint_input">input</string>
     <string name="send">send</string>
     <string name="url_api">https://homedonuts.herokuapp.com/</string>
+    <string name="service_id">com.homers.service</string>
 </resources>
