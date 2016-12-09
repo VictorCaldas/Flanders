@@ -1,5 +1,6 @@
 package com.flanders.UI;
 
+
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
 
+
+import com.flanders.API.Rotas;
 import com.flanders.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -18,11 +21,22 @@ import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
 import com.google.android.gms.nearby.messages.Strategy;
+import com.google.gson.JsonObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.OkClient;
+import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -168,13 +182,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void addNewMessage(ChatMessage message) {
+    private void addNewMessage(final ChatMessage message) {
         if (mMessageList.contains(message)) return;
         mMessageList.add(message);
         Collections.sort(mMessageList);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                createRoute(makeJsonRoute(message));
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -205,6 +220,55 @@ public class MainActivity extends AppCompatActivity {
         public void onConnectionSuspended(int i) {
 
         }
+    }
+
+    private void createRoute(JsonObject objProfile) {
+
+        RequestInterceptor requestInterceptor = new RequestInterceptor() {
+            @Override
+            public void intercept(RequestFacade request) {
+                request.addHeader("Content-Type", "application/json");
+            }
+        };
+
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setClient(new OkClient())
+                .setEndpoint(getResources().getString(R.string.url_api))
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setRequestInterceptor(requestInterceptor)
+                .build();
+        Rotas api = restAdapter.create(Rotas.class);
+        api.postRoute(objProfile, new Callback<Response>() {
+            @Override
+            public void success(retrofit.client.Response result, Response response) {
+                BufferedReader reader = null;
+                String output = "";
+                try {
+                    reader = new BufferedReader(new InputStreamReader(result.getBody().in()));
+                    output = reader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private JsonObject makeJsonRoute(ChatMessage message){
+        JsonObject objRoute = new JsonObject();
+        objRoute.addProperty("latitude", message.getLat());
+        objRoute.addProperty("longitude",message.getLon());
+        objRoute.addProperty("time", message.getTimestamp());
+        objRoute.addProperty("speed", message.getVel());
+        objRoute.addProperty("rvc_name", "cubatao_one" );
+        objRoute.addProperty("street_name", "Rua Cubatão");
+        objRoute.addProperty("car_name", "Uno");
+
+        return objRoute;
     }
 
     private class NearbyConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {

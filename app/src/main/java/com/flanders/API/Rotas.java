@@ -1,27 +1,18 @@
 package com.flanders.API;
 
 
-import com.flanders.Model.rotas;
+import com.google.gson.JsonObject;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
+import retrofit.Callback;
+import retrofit.client.Response;
+import retrofit.http.Body;
+import retrofit.http.POST;
 
 public interface Rotas {
 
-    @FormUrlEncoded
-    @POST("/rotas")
-    Call<ResponseBody> sendRoutes(
-            @Field("latitude") Double latitude,
-            @Field("longitude") Double longitude,
-            @Field("time") String time,
-            @Field("speed") int speed,
-            @Field("rvc_name") String rvc_name);
+    @POST("/rotas/")
+    void postRoute(
+            @Body JsonObject bean, Callback<Response> callback);
 
 
-    @GET("/rotas")
-    Call<rotas> getModel();
 }
